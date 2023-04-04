@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -21,12 +22,15 @@ public class Menu implements Serializable {
     private Long id;
 
     @ApiModelProperty("菜单父id")
+    @NotBlank(message = "菜单父id不能为空")
     private Long parentId;
 
     @ApiModelProperty("菜单名称")
+    @NotBlank(message = "菜单名称不能为空")
     private String name;
 
     @ApiModelProperty("菜单父类型(0：目录，1：菜单，2：按钮)")
+    @NotBlank(message = "菜单类型不能为空")
     private Integer type;
 
     @ApiModelProperty("路由地址")

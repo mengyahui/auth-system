@@ -20,6 +20,7 @@ import com.auth.system.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -45,6 +46,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private RoleService roleService;
+
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Map<String, Object> getUserInfo(String username) {
@@ -92,7 +96,10 @@ public class UserServiceImpl implements UserService {
     public int insertUser(AddUserDto addUserDto) {
         addUserDto.setCreateTime(new Date());
         addUserDto.setUpdateTime(new Date());
-        // todo 处理密码和头像
+        String password = addUserDto.getPassword();
+        String encode = passwordEncoder.encode(password);
+        addUserDto.setPassword(encode);
+        // todo 处理头像
         return userMapper.addUser(addUserDto);
     }
 

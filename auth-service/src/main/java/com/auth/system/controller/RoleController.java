@@ -12,10 +12,14 @@ import com.auth.system.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,6 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("system/role")
 @Api(tags = "角色管理")
+@Validated
 public class RoleController {
     
     @Resource
@@ -47,35 +52,35 @@ public class RoleController {
 
     @ApiOperation("根据角色id查询角色")
     @GetMapping("{id}")
-    public ApiResult<?> getRoleById(@PathVariable @ApiParam("角色id") Long id) {
+    public ApiResult<?> getRoleById(@NotBlank(message = "角色id不能为空") @PathVariable @ApiParam("角色id") Long id) {
         Role role = roleService.getRoleById(id);
         return ApiResult.success(role);
     }
 
     @ApiOperation("添加角色")
     @PostMapping("add")
-    public ApiResult<?> addRole(@RequestBody AddRoleDto addRoleDto) {
+    public ApiResult<?> addRole(@Validated @RequestBody AddRoleDto addRoleDto) {
         int result = roleService.addRole(addRoleDto);
         return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("修改角色")
     @PutMapping("update")
-    public ApiResult<?> updateRole(@RequestBody Role role) {
+    public ApiResult<?> updateRole(@Validated @RequestBody Role role) {
         int result = roleService.updateRole(role);
         return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("删除角色")
     @DeleteMapping("delete")
-    public ApiResult<?> deleteRole(@RequestBody @ApiParam("角色id列表") List<Long> roleIds) {
+    public ApiResult<?> deleteRole(@NotEmpty(message = "角色Id列表不能为空") @RequestBody @ApiParam("角色id列表") List<Long> roleIds) {
         int result = roleService.deleteRole(roleIds);
         return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("导出角色")
     @PutMapping("download")
-    public void export(HttpServletResponse response, @RequestBody @ApiParam("角色id列表") List<Long> roleIds) throws IOException {
+    public void export(HttpServletResponse response, @NotEmpty(message = "角色Id列表不能为空") @RequestBody @ApiParam("角色id列表") List<Long> roleIds) throws IOException {
         roleService.exportData(response,roleIds);
     }
 

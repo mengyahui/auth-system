@@ -4,6 +4,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -15,6 +18,7 @@ import java.util.List;
 public class AssignRoleDto {
 
     @ApiModelProperty("角色id")
+    @NotBlank(message = "角色id不能为空")
     public Long roleId;
 
     @ApiModelProperty("菜单列表")

@@ -7,9 +7,11 @@ import com.auth.system.service.MenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -20,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("system/menu")
 @Api(tags = "菜单管理")
+@Validated
 public class MenuController {
 
     @Resource
@@ -28,7 +31,7 @@ public class MenuController {
 
     @ApiOperation("根据角色id查询菜单树")
     @GetMapping("all/{id}")
-    public ApiResult<?> getAll(@PathVariable @ApiParam("角色id") Long id) {
+    public ApiResult<?> getAll(@NotBlank(message = "角色id不能为空") @PathVariable @ApiParam("角色id") Long id) {
         List<Menu> allMenu = menuService.findAllMenu(id);
         return ApiResult.success(allMenu);
     }
@@ -42,21 +45,21 @@ public class MenuController {
 
     @ApiOperation("修改菜单")
     @PutMapping("update")
-    public ApiResult<?> updateMenu(@RequestBody Menu menu) {
+    public ApiResult<?> updateMenu(@Validated @RequestBody Menu menu) {
         int result = menuService.updateMenu(menu);
         return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("添加菜单")
     @PostMapping("add")
-    public ApiResult<?> addMenu(@RequestBody Menu menu) {
+    public ApiResult<?> addMenu(@Validated @RequestBody Menu menu) {
         int result = menuService.addMenu(menu);
         return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("删除菜单")
     @DeleteMapping("delete/{id}")
-    public ApiResult<?> deleteMenu(@PathVariable @ApiParam("菜单id") Long id) {
+    public ApiResult<?> deleteMenu(@NotBlank(message = "菜单id不能为空") @PathVariable @ApiParam("菜单id") Long id) {
         int result = menuService.deleteMenu(id);
         return result > 0 ? ApiResult.success() : ApiResult.fail();
     }

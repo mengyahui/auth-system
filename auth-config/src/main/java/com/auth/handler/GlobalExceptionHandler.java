@@ -4,8 +4,7 @@ import com.auth.exception.SystemException;
 import com.auth.model.result.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.BindException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,7 +13,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 /**
  * @author MYH
@@ -103,25 +105,25 @@ public class GlobalExceptionHandler {
     }
 
     // 数据绑定异常
-//    @ExceptionHandler(BindException.class)
-//    public ApiResult<?> bindException(BindException e) {
-//        ObjectError objectError = e.getBindingResult().getAllErrors().get(0);
-//        log.error("数据绑定异常:{}",objectError.getDefaultMessage());
-//        return ApiResult.ofFail(objectError.getDefaultMessage());
-//    }
-//
-//    // 参数校验异常
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    public ApiResult<?> constraintViolationExceptionHandler(ConstraintViolationException e) {
-//        String message = e.getConstraintViolations().stream()
-//                .map(ConstraintViolation::getMessage)
-//                .collect(Collectors.toList()).get(0);
-//        return ApiResult.ofFail(message);
-//    }
+    @ExceptionHandler(BindException.class)
+    public ApiResult<?> bindException(BindException e) {
+        ObjectError objectError = e.getBindingResult().getAllErrors().get(0);
+        log.error("数据绑定异常:{}",objectError.getDefaultMessage());
+        return ApiResult.fail(objectError.getDefaultMessage());
+    }
 
-//    @ExceptionHandler(Exception.class)
-//    public ApiResult<?> exceptionAllHandler(Exception e) {
-//        log.error("未知异常:{}",e.getMessage());
-//        return ApiResult.fail("未知异常");
-//    }
+    // 参数校验异常
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ApiResult<?> constraintViolationExceptionHandler(ConstraintViolationException e) {
+        String message = e.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toList()).get(0);
+        return ApiResult.fail(message);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ApiResult<?> exceptionAllHandler(Exception e) {
+        log.error("未知异常:{}",e.getMessage());
+        return ApiResult.fail("未知异常");
+    }
 }

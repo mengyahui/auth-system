@@ -16,10 +16,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,6 +33,7 @@ import java.util.List;
 @RestController
 @RequestMapping("system/user")
 @Api(tags = "用户管理")
+@Validated
 public class UserController {
 
     @Resource
@@ -48,28 +52,28 @@ public class UserController {
     @ApiOperation("删除用户")
     @DeleteMapping("delete")
     @PreAuthorize("hasAnyAuthority('btn.user.delete')")
-    public ApiResult<?> deleteUser(@RequestBody @ApiParam("用户id列表") List<Long> userIds) {
+    public ApiResult<?> deleteUser(@NotEmpty(message = "用户id列表不能为空") @RequestBody @ApiParam("用户id列表") List<Long> userIds) {
         int result = userService.removeUserByIds(userIds);
         return result>0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("添加用户")
     @PostMapping("add")
-    public ApiResult<?> addUser(@RequestBody AddUserDto addUserDto) {
+    public ApiResult<?> addUser(@Validated @RequestBody AddUserDto addUserDto) {
         int result = userService.insertUser(addUserDto);
         return result>0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("修改用户")
     @PutMapping("update")
-    public ApiResult<?> updateUser(@RequestBody UpdateUserDto updateUserDto) {
+    public ApiResult<?> updateUser(@Validated @RequestBody UpdateUserDto updateUserDto) {
         int result = userService.editUserById(updateUserDto);
         return result>0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("通过id获取用户")
     @GetMapping("{id}")
-    public ApiResult<?> getUserById(@PathVariable @ApiParam("用户id") Long id) {
+    public ApiResult<?> getUserById(@NotBlank(message = "用户id不能为空") @PathVariable @ApiParam("用户id") Long id) {
         UserVo userVo = userService.selectUserById(id);
         return ApiResult.success(userVo);
     }
@@ -82,21 +86,21 @@ public class UserController {
 
     @ApiOperation("更改用户状态")
     @PutMapping("status")
-    public ApiResult<?> changeUserStatus(@RequestBody ChangeStatusDto statusDto) {
+    public ApiResult<?> changeUserStatus(@Validated @RequestBody ChangeStatusDto statusDto) {
        int result = userService.changeStatusById(statusDto);
         return result>0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("获取用户具有的角色")
     @GetMapping("assign/{id}")
-    public ApiResult<?> assign(@PathVariable @ApiParam("用户id") Long id) {
+    public ApiResult<?> assign(@NotBlank(message = "用户id不能为空") @PathVariable @ApiParam("用户id") Long id) {
         List<RoleVo> userRoles = roleService.selectRoleSByUserId(id);
         return ApiResult.success(userRoles);
     }
 
     @ApiOperation("给用户分配角色")
     @PutMapping("toAssign")
-    public ApiResult<?> toAssign(@RequestBody AssignUserDto assignUserDto) {
+    public ApiResult<?> toAssign(@Validated @RequestBody AssignUserDto assignUserDto) {
         boolean assign = userService.toAssign(assignUserDto);
         return assign ? ApiResult.success() : ApiResult.fail();
     }
