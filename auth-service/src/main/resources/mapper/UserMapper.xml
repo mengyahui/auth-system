@@ -17,7 +17,7 @@
     </resultMap>
 
     <sql id="base_column">
-        id,username,name,phone,avatar_url,status,create_time,update_time
+        id,username,password,name,phone,avatar_url,status,create_time,update_time
     </sql>
     <!--新增用户-->
     <insert id="addUser" parameterType="com.auth.model.dto.user.AddUserDto">

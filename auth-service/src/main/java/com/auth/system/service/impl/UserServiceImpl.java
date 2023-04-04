@@ -22,6 +22,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -66,11 +67,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getByUsername(String username) {
         List<User> userList = userMapper.selectByUsername(username);
-        if (userList != null && !userList.isEmpty()) {
-            return userList.get(0);
-        } else {
+        if (CollectionUtils.isEmpty(userList)) {
             throw new RuntimeException("该用户不存在");
         }
+        return userList.get(0);
     }
 
     @Override

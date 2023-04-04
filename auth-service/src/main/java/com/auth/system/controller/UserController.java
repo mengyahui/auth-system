@@ -15,6 +15,7 @@ import com.auth.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -46,6 +47,7 @@ public class UserController {
 
     @ApiOperation("删除用户")
     @DeleteMapping("delete")
+    @PreAuthorize("hasAnyAuthority('btn.user.delete')")
     public Result<?> deleteUser(@RequestBody @ApiParam("用户id列表") List<Long> userIds) {
         int result = userService.removeUserByIds(userIds);
         return result>0 ? Result.ok(): Result.fail();
