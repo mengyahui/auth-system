@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auth.system.mapper.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.auth.model.entity.Role">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+            <result property="roleCode" column="role_code" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="base_column">
+        id,role_name,role_code,
+        description,create_time
+    </sql>
+    <!--批量添加用户具有的角色-->
+    <insert id="addRolesByList" parameterType="com.auth.model.entity.UserRole">
+        insert into `t_user_role`(`user_id`,`role_id`,`create_time`,`update_time`)
+        values
+        <foreach collection="userRoles" item="userRole" separator=",">
+            (#{userRole.userId}, #{userRole.roleId}, #{userRole.createTime}, #{userRole.updateTime})
+        </foreach>
+    </insert>
+    <!--添加角色-->
+    <insert id="insertRole" parameterType="com.auth.model.dto.role.AddRoleDto">
+        insert into `t_role`(`role_name`,`role_code`,`description`,`create_time`,`update_time`)
+        values (#{addRoleDto.roleName},
+                #{addRoleDto.roleCode},
+                #{addRoleDto.description},
+                #{addRoleDto.createTime},
+                #{addRoleDto.updateTime})
+    </insert>
+    <!--删除用户角色-->
+    <update id="deleteRoleByUserId">
+        update `t_user_role` ur set `is_deleted` = 1 where ur.user_id = #{userId}
+    </update>
+    <!--修改角色-->
+    <update id="editRole">
+        update `t_role`
+        set `role_name` = #{role.roleName},
+            `role_code` = #{role.roleCode},
+            `description` = #{role.description},
+            `update_time` = #{role.updateTime}
+        where `id` = #{role.id}
+    </update>
+    <!--批量删除角色-->
+    <update id="deleteRoleByIds">
+        update `t_role`
+        set `is_deleted` = 1
+        where `id` in
+        <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+            #{roleId}
+        </foreach>
+    </update>
+    <!--查询所有角色-->
+    <select id="findAllRole" resultType="com.auth.model.vo.role.RoleVo">
+        select <include refid="base_column" /> from `t_role` where `is_deleted` = 0
+    </select>
+    <!--查询用户具有的角色列表-->
+    <select id="getRolesByUserId" resultType="com.auth.model.vo.role.RoleVo">
+        select r.id, r.role_name from `t_role` r
+            inner join `t_user_role` ur on r.id = ur.role_id
+            where ur.user_id = #{userId}
+                and r.is_deleted = 0
+                and ur.is_deleted = 0
+    </select>
+    <!--条件查询角色列表-->
+    <select id="list" resultType="com.auth.model.vo.role.RoleVo">
+        select <include refid="base_column" /> from `t_role`
+        where `is_deleted` = 0
+        <if test="searchRoleDto.roleName != '' and searchRoleDto.roleName != null">
+            and `role_name` like concat('%', #{searchRoleDto.roleName}, '%')
+        </if>
+        <if test="searchRoleDto.startTime != null">
+            and `create_time` &gt;= #{searchRoleDto.startTime}
+        </if>
+        <if test="searchRoleDto.endTime != null">
+            and `create_time` &lt;= #{searchRoleDto.endTime}
+        </if>
+    </select>
+    <!--根据id查询角色-->
+    <select id="selectRoleById" resultType="com.auth.model.entity.Role">
+        select <include refid="base_column" /> from `t_role` where `id` = #{id}
+    </select>
+    <!--根据角色id列表查询角色列表-->
+    <select id="selectRolesByIds" resultType="com.auth.model.vo.role.ExcelRoleVo">
+        select `role_name`, `role_code`, `description`, `create_time` from `t_role`
+        where `id` in
+        <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+            #{roleId}
+        </foreach>
+    </select>
+</mapper>

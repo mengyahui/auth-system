@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auth.system.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.auth.model.entity.User">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="avatarUrl" column="avatar_url" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="base_column">
+        id,username,name,phone,avatar_url,status,create_time,update_time
+    </sql>
+    <!--新增用户-->
+    <insert id="addUser" parameterType="com.auth.model.dto.user.AddUserDto">
+        insert into t_user(username,password,name,phone,avatar_url,create_time,update_time)
+        values(#{addUserDto.username},
+               #{addUserDto.password},
+               #{addUserDto.name},
+               #{addUserDto.phone},
+               #{addUserDto.avatarUrl},
+               #{addUserDto.createTime},
+               #{addUserDto.updateTime})
+    </insert>
+    <!--删除用户-->
+    <update id="deleteByUserIds" parameterType="long">
+        update t_user set is_deleted = 1 where id in
+        <foreach collection="userIds" item="userId" separator="," open="(" close=")">
+            #{userId}
+        </foreach>
+    </update>
+    <!--修改用户-->
+    <update id="updateUserById" parameterType="com.auth.model.dto.user.UpdateUserDto">
+        update `t_user`
+        set `username` = #{updateUserDto.username},
+            `name` = #{updateUserDto.name},
+            `phone` = #{updateUserDto.phone},
+            `avatar_url` = #{updateUserDto.avatarUrl},
+            `update_time` = #{updateUserDto.updateTime}
+        where `id` = #{updateUserDto.id}
+    </update>
+    <!--改变用户状态-->
+    <update id="changeUserStatus">
+        update `t_user`
+        set `status` = #{statusDto.status}
+        where `id` = #{statusDto.id}
+    </update>
+    <!--根据用户名查询用户-->
+    <select id="selectByUsername" resultType="com.auth.model.entity.User">
+        select
+        <include refid="base_column"/>
+        from `t_user`
+        where `username` = #{username} and `is_deleted` = 0
+    </select>
+    <!--条件查询用户-->
+    <select id="list" resultType="com.auth.model.vo.user.UserVo">
+        select * from t_user
+        where is_deleted = 0
+        <if test="searchUserDto.username != '' and searchUserDto.username != null">
+           and username like concat('%', #{searchUserDto.username}, '%')
+        </if>
+        <if test="searchUserDto.startTime != null ">
+            and create_time &gt;= #{searchUserDto.startTime}
+        </if>
+        <if test="searchUserDto.endTime != null ">
+            and create_time &lt;= #{searchUserDto.endTime}
+        </if>
+    </select>
+    <!--根据用户id查询用户-->
+    <select id="getUserById" resultType="com.auth.model.vo.user.UserVo">
+        select <include refid="base_column"/>
+        from `t_user`
+        where `id` = #{id} and `is_deleted` = 0
+    </select>
+    <!--根据用户id列表查询用户-->
+    <select id="getUserListByIds" resultType="com.auth.model.vo.user.ExcelUserVo">
+        select <include refid="base_column" />
+        from `t_user`
+        where `is_deleted` = 0 and `id` in
+        <foreach collection="userIds" item="userId" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </select>
+</mapper>

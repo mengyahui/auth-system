@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auth.system.mapper.MenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.auth.model.entity.Menu">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="TINYINT"/>
+        <result property="path" column="path" jdbcType="VARCHAR"/>
+        <result property="component" column="component" jdbcType="VARCHAR"/>
+        <result property="perms" column="perms" jdbcType="VARCHAR"/>
+        <result property="icon" column="icon" jdbcType="VARCHAR"/>
+        <result property="sortValue" column="sort_value" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="base_column">
+        id,parent_id,name,
+        type,path,component,
+        perms,icon,sort_value,
+        status,create_time,update_time
+    </sql>
+    <!--批量添加角色具有的权限-->
+    <insert id="addMenuList">
+        insert into `t_role_menu`(`role_id`, `menu_id`, `create_time`, `update_time`)
+        values
+        <foreach collection="menus" item="menu" separator=",">
+            (
+             #{menu.roleId},
+             #{menu.menuId},
+             #{menu.createTime},
+             #{menu.updateTime}
+             )
+        </foreach>
+    </insert>
+    <!--添加菜单-->
+    <insert id="insertMenu">
+        insert into `t_menu`(`parent_id`,
+                             `name`,
+                             `type`,
+                             `path`,
+                             `component`,
+                             `perms`,
+                             `icon`,
+                             `sort_value`,
+                             `create_time`,
+                             `update_time`)
+        values (#{menu.parentId},
+                #{menu.name},
+                #{menu.type},
+                #{menu.path},
+                #{menu.component},
+                #{menu.perms},
+                #{menu.icon},
+                #{menu.sortValue},
+                #{menu.createTime},
+                #{menu.updateTime})
+    </insert>
+    <!--删除角色具有的权限-->
+    <update id="deleteMenusByRoleId">
+        update `t_role_menu` set `is_deleted` = 1 where `role_id` = #{id}
+    </update>
+    <!--修改菜单-->
+    <update id="updateMenu">
+        update `t_menu`
+            set `parent_id` = #{menu.parentId},
+                `name` = #{menu.name},
+                `path` = #{menu.path},
+                `type` = #{menu.type},
+                `component` = #{menu.component},
+                `perms` = #{menu.perms},
+                `sort_value` = #{menu.sortValue},
+                `status` = #{menu.status},
+                `update_time` = #{menu.updateTime}
+            where `id` = #{menu.id}
+    </update>
+    <!--删除菜单-->
+    <update id="removeMenu">
+        update `t_menu` set `is_deleted` = 1 where `id` = #{id}
+    </update>
+    <!--批量添加角色具有的权限-->
+    <select id="selectMenuByUserId" resultMap="BaseResultMap">
+        select distinct m.*
+        from t_menu m
+                 inner join t_role_menu rm on rm.menu_id = m.id
+                 inner join t_user_role ur on ur.role_id = rm.role_id
+        where ur.user_id = #{id}
+    </select>
+    <!--查询菜单列表-->
+    <select id="selectMenuList" resultMap="BaseResultMap">
+        select
+        <include refid="base_column"/>
+        from t_menu
+        where `is_deleted` = 0
+        order by `sort_value`
+    </select>
+    <!--查询角色具有的权限列表-->
+    <select id="findMenusByRoleId" resultMap="BaseResultMap">
+        select m.id, m.parent_id, m.name, m.type, m.path, m.component, m.perms, m.icon, m.sort_value, m.status
+            from `t_menu` m
+                inner join `t_role_menu` rm on rm.menu_id = m.id
+        where rm.role_id = #{id}
+            and m.status = 1
+            and m.is_deleted = 0
+            and rm.is_deleted = 0
+    </select>
+</mapper>
