@@ -5,7 +5,7 @@ import com.auth.model.dto.role.AddRoleDto;
 import com.auth.model.dto.role.AssignRoleDto;
 import com.auth.model.dto.role.SearchRoleDto;
 import com.auth.model.entity.Role;
-import com.auth.model.result.Result;
+import com.auth.model.result.ApiResult;
 import com.auth.model.vo.PageVo;
 import com.auth.model.vo.role.RoleVo;
 import com.auth.system.service.RoleService;
@@ -33,44 +33,44 @@ public class RoleController {
     
     @ApiOperation("获取全部角色")
     @GetMapping("all")
-    public Result<?> findAllRole() {
+    public ApiResult<?> findAllRole() {
         List<RoleVo> allRole = roleService.findAllRole();
-        return Result.ok(allRole);
+        return ApiResult.success(allRole);
     }
 
     @ApiOperation("根据条件查询角色列表")
     @PostMapping("list")
-    public Result<?> getRoleList(@RequestBody SearchRoleDto searchRoleDto) {
+    public ApiResult<?> getRoleList(@RequestBody SearchRoleDto searchRoleDto) {
         PageVo pageVo = roleService.getRoleList(searchRoleDto);
-        return Result.ok(pageVo);
+        return ApiResult.success(pageVo);
     }
 
     @ApiOperation("根据角色id查询角色")
     @GetMapping("{id}")
-    public Result<?> getRoleById(@PathVariable @ApiParam("角色id") Long id) {
+    public ApiResult<?> getRoleById(@PathVariable @ApiParam("角色id") Long id) {
         Role role = roleService.getRoleById(id);
-        return Result.ok(role);
+        return ApiResult.success(role);
     }
 
     @ApiOperation("添加角色")
     @PostMapping("add")
-    public Result<?> addRole(@RequestBody AddRoleDto addRoleDto) {
+    public ApiResult<?> addRole(@RequestBody AddRoleDto addRoleDto) {
         int result = roleService.addRole(addRoleDto);
-        return result > 0 ? Result.ok() : Result.fail();
+        return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("修改角色")
     @PutMapping("update")
-    public Result<?> updateRole(@RequestBody Role role) {
+    public ApiResult<?> updateRole(@RequestBody Role role) {
         int result = roleService.updateRole(role);
-        return result > 0 ? Result.ok() : Result.fail();
+        return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("删除角色")
     @DeleteMapping("delete")
-    public Result<?> deleteRole(@RequestBody @ApiParam("角色id列表") List<Long> roleIds) {
+    public ApiResult<?> deleteRole(@RequestBody @ApiParam("角色id列表") List<Long> roleIds) {
         int result = roleService.deleteRole(roleIds);
-        return result > 0 ? Result.ok() : Result.fail();
+        return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("导出角色")
@@ -81,9 +81,9 @@ public class RoleController {
 
     @ApiOperation("给角色分配权限")
     @PutMapping("toAssign")
-    public Result<?> toAssign(@RequestBody AssignRoleDto assignRoleDto) {
+    public ApiResult<?> toAssign(@RequestBody AssignRoleDto assignRoleDto) {
         boolean result = roleService.doAssign(assignRoleDto);
-        return result ? Result.ok() : Result.fail();
+        return result ? ApiResult.success() : ApiResult.fail();
     }
 
 }

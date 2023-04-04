@@ -39,6 +39,7 @@
             <artifactId>spring-boot-starter-security</artifactId>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
 </project>

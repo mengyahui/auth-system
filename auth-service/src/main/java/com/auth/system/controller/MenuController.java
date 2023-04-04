@@ -2,7 +2,7 @@ package com.auth.system.controller;
 
 
 import com.auth.model.entity.Menu;
-import com.auth.model.result.Result;
+import com.auth.model.result.ApiResult;
 import com.auth.system.service.MenuService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,37 +28,37 @@ public class MenuController {
 
     @ApiOperation("根据角色id查询菜单树")
     @GetMapping("all/{id}")
-    public Result<?> getAll(@PathVariable @ApiParam("角色id") Long id) {
+    public ApiResult<?> getAll(@PathVariable @ApiParam("角色id") Long id) {
         List<Menu> allMenu = menuService.findAllMenu(id);
-        return Result.ok(allMenu);
+        return ApiResult.success(allMenu);
     }
 
     @ApiOperation("查询菜单树")
     @GetMapping("all")
-    public Result<?> findMenuTree() {
+    public ApiResult<?> findMenuTree() {
         List<Menu> menuTree = menuService.findMenuTree();
-        return Result.ok(menuTree);
+        return ApiResult.success(menuTree);
     }
 
     @ApiOperation("修改菜单")
     @PutMapping("update")
-    public Result<?> updateMenu(@RequestBody Menu menu) {
+    public ApiResult<?> updateMenu(@RequestBody Menu menu) {
         int result = menuService.updateMenu(menu);
-        return result > 0 ? Result.ok() : Result.fail();
+        return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("添加菜单")
     @PostMapping("add")
-    public Result<?> addMenu(@RequestBody Menu menu) {
+    public ApiResult<?> addMenu(@RequestBody Menu menu) {
         int result = menuService.addMenu(menu);
-        return result > 0 ? Result.ok() : Result.fail();
+        return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
     @ApiOperation("删除菜单")
     @DeleteMapping("delete/{id}")
-    public Result<?> deleteMenu(@PathVariable @ApiParam("菜单id") Long id) {
+    public ApiResult<?> deleteMenu(@PathVariable @ApiParam("菜单id") Long id) {
         int result = menuService.deleteMenu(id);
-        return result > 0 ? Result.ok() : Result.fail();
+        return result > 0 ? ApiResult.success() : ApiResult.fail();
     }
 
 

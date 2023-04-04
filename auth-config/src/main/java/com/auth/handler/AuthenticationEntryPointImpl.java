@@ -16,6 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
-        ResponseHelper.write(response);
+        ResponseHelper.writeException(response,authException);
     }
 }

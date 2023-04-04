@@ -6,7 +6,7 @@ import com.auth.model.dto.user.AddUserDto;
 import com.auth.model.dto.user.AssignUserDto;
 import com.auth.model.dto.user.SearchUserDto;
 import com.auth.model.dto.user.UpdateUserDto;
-import com.auth.model.result.Result;
+import com.auth.model.result.ApiResult;
 import com.auth.model.vo.PageVo;
 import com.auth.model.vo.role.RoleVo;
 import com.auth.model.vo.user.UserVo;
@@ -40,38 +40,38 @@ public class UserController {
 
     @ApiOperation("根据查询条件获取用户列表")
     @PostMapping("list")
-    public Result<?> getUserList(@RequestBody SearchUserDto searchUserDto) {
+    public ApiResult<?> getUserList(@RequestBody SearchUserDto searchUserDto) {
         PageVo pageVo = userService.getUserList(searchUserDto);
-        return Result.ok(pageVo);
+        return ApiResult.success(pageVo);
     }
 
     @ApiOperation("删除用户")
     @DeleteMapping("delete")
     @PreAuthorize("hasAnyAuthority('btn.user.delete')")
-    public Result<?> deleteUser(@RequestBody @ApiParam("用户id列表") List<Long> userIds) {
+    public ApiResult<?> deleteUser(@RequestBody @ApiParam("用户id列表") List<Long> userIds) {
         int result = userService.removeUserByIds(userIds);
-        return result>0 ? Result.ok(): Result.fail();
+        return result>0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("添加用户")
     @PostMapping("add")
-    public Result<?> addUser(@RequestBody AddUserDto addUserDto) {
+    public ApiResult<?> addUser(@RequestBody AddUserDto addUserDto) {
         int result = userService.insertUser(addUserDto);
-        return result>0 ? Result.ok(): Result.fail();
+        return result>0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("修改用户")
     @PutMapping("update")
-    public Result<?> updateUser(@RequestBody UpdateUserDto updateUserDto) {
+    public ApiResult<?> updateUser(@RequestBody UpdateUserDto updateUserDto) {
         int result = userService.editUserById(updateUserDto);
-        return result>0 ? Result.ok(): Result.fail();
+        return result>0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("通过id获取用户")
     @GetMapping("{id}")
-    public Result<?> getUserById(@PathVariable @ApiParam("用户id") Long id) {
+    public ApiResult<?> getUserById(@PathVariable @ApiParam("用户id") Long id) {
         UserVo userVo = userService.selectUserById(id);
-        return Result.ok(userVo);
+        return ApiResult.success(userVo);
     }
 
     @ApiOperation("导出用户")
@@ -82,23 +82,23 @@ public class UserController {
 
     @ApiOperation("更改用户状态")
     @PutMapping("status")
-    public Result<?> changeUserStatus(@RequestBody ChangeStatusDto statusDto) {
+    public ApiResult<?> changeUserStatus(@RequestBody ChangeStatusDto statusDto) {
        int result = userService.changeStatusById(statusDto);
-        return result>0 ? Result.ok(): Result.fail();
+        return result>0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("获取用户具有的角色")
     @GetMapping("assign/{id}")
-    public Result<?> assign(@PathVariable @ApiParam("用户id") Long id) {
+    public ApiResult<?> assign(@PathVariable @ApiParam("用户id") Long id) {
         List<RoleVo> userRoles = roleService.selectRoleSByUserId(id);
-        return Result.ok(userRoles);
+        return ApiResult.success(userRoles);
     }
 
     @ApiOperation("给用户分配角色")
     @PutMapping("toAssign")
-    public Result<?> toAssign(@RequestBody AssignUserDto assignUserDto) {
+    public ApiResult<?> toAssign(@RequestBody AssignUserDto assignUserDto) {
         boolean assign = userService.toAssign(assignUserDto);
-        return assign ? Result.ok() : Result.fail();
+        return assign ? ApiResult.success() : ApiResult.fail();
     }
 
 }

@@ -27,10 +27,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // 查询用户信息
         User user = userService.getByUsername(username);
-        if(user == null) {
-            throw new RuntimeException("用户名或者密码错误");
-        }
 
         // 查询用户的权限信息
         List<String> permissions = menuService.findUserPermsList(user.getId());
