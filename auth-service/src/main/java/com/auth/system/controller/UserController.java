@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 
@@ -61,19 +62,19 @@ public class UserController {
     @PostMapping("add")
     public ApiResult<?> addUser(@Validated @RequestBody AddUserDto addUserDto) {
         int result = userService.insertUser(addUserDto);
-        return result>0 ? ApiResult.success(): ApiResult.fail();
+        return result > 0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("修改用户")
     @PutMapping("update")
     public ApiResult<?> updateUser(@Validated @RequestBody UpdateUserDto updateUserDto) {
         int result = userService.editUserById(updateUserDto);
-        return result>0 ? ApiResult.success(): ApiResult.fail();
+        return result >0 ? ApiResult.success(): ApiResult.fail();
     }
 
     @ApiOperation("通过id获取用户")
     @GetMapping("{id}")
-    public ApiResult<?> getUserById(@NotBlank(message = "用户id不能为空") @PathVariable @ApiParam("用户id") Long id) {
+    public ApiResult<?> getUserById(@NotNull(message = "用户id不能为空") @PathVariable @ApiParam("用户id") Long id) {
         UserVo userVo = userService.selectUserById(id);
         return ApiResult.success(userVo);
     }
@@ -93,7 +94,7 @@ public class UserController {
 
     @ApiOperation("获取用户具有的角色")
     @GetMapping("assign/{id}")
-    public ApiResult<?> assign(@NotBlank(message = "用户id不能为空") @PathVariable @ApiParam("用户id") Long id) {
+    public ApiResult<?> assign(@NotNull(message = "用户id不能为空") @PathVariable @ApiParam("用户id") Long id) {
         List<RoleVo> userRoles = roleService.selectRoleSByUserId(id);
         return ApiResult.success(userRoles);
     }

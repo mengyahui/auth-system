@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class MenuController {
 
     @ApiOperation("根据角色id查询菜单树")
     @GetMapping("all/{id}")
-    public ApiResult<?> getAll(@NotBlank(message = "角色id不能为空") @PathVariable @ApiParam("角色id") Long id) {
+    public ApiResult<?> getAll(@NotNull(message = "角色id不能为空") @PathVariable @ApiParam("角色id") Long id) {
         List<Menu> allMenu = menuService.findAllMenu(id);
         return ApiResult.success(allMenu);
     }

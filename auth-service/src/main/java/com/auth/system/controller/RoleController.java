@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class RoleController {
 
     @ApiOperation("根据角色id查询角色")
     @GetMapping("{id}")
-    public ApiResult<?> getRoleById(@NotBlank(message = "角色id不能为空") @PathVariable @ApiParam("角色id") Long id) {
+    public ApiResult<?> getRoleById(@NotNull(message = "角色id不能为空") @PathVariable @ApiParam("角色id") Long id) {
         Role role = roleService.getRoleById(id);
         return ApiResult.success(role);
     }

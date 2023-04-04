@@ -18,7 +18,7 @@ import java.util.List;
 public class AssignRoleDto {
 
     @ApiModelProperty("角色id")
-    @NotBlank(message = "角色id不能为空")
+    @NotNull(message = "角色id不能为空")
     public Long roleId;
 
     @ApiModelProperty("菜单列表")

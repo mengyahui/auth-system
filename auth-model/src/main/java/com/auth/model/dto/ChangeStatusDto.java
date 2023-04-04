@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author MYH
@@ -14,10 +15,10 @@ import javax.validation.constraints.NotBlank;
 @ApiModel("改变状态DTO")
 public class ChangeStatusDto {
     @ApiModelProperty("id")
-    @NotBlank(message = "用户id不能为空")
+    @NotNull(message = "用户id不能为空")
     public Long id;
 
     @ApiModelProperty("状态")
-    @NotBlank(message = "用户状态不能为空")
+    @NotNull(message = "用户状态不能为空")
     public Integer status;
 }

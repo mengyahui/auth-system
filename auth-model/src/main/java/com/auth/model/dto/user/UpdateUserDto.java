@@ -6,6 +6,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Date;
 public class UpdateUserDto {
 
     @ApiModelProperty("用户id")
-    @NotBlank(message = "用户id不能为空")
+    @NotNull(message = "用户id不能为空")
     private Long id;
 
     @ApiModelProperty("用户名")
