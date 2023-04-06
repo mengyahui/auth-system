@@ -1,16 +1,14 @@
 package com.auth.system.controller;
 
 
-import com.alibaba.fastjson.JSON;
 import com.auth.helper.JwtHelper;
+import com.auth.helper.RedisHelper;
 import com.auth.model.dto.user.UserLoginDto;
 import com.auth.model.entity.LoginUser;
 import com.auth.model.result.ApiResult;
 import com.auth.system.service.UserService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +37,7 @@ public class LoginController {
     private AuthenticationManager authenticationManager ;
 
     @Resource
-    private RedisTemplate<String , String> redisTemplate ;
+    private RedisHelper redisHelper;
 
 
 
@@ -57,7 +55,8 @@ public class LoginController {
         }
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         String userId = loginUser.getUser().getId().toString();
-        redisTemplate.boundValueOps("login_user:" + userId).set(JSON.toJSONString(loginUser));
+
+        redisHelper.setCacheObject("login_user:" + userId,loginUser);
 
         String token = JwtHelper.createToken(loginUser.getUser().getId().toString(), loginUser.getUser().getUsername());
         Map<String, Object> map = new HashMap<>();
@@ -81,7 +80,7 @@ public class LoginController {
     public ApiResult<?> logout(){
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long userId = loginUser.getUser().getId();
-        redisTemplate.delete("login_user:" + userId);
+        redisHelper.del("login_user:" + userId);
         return ApiResult.success();
     }
 

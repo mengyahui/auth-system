@@ -29,7 +29,8 @@ public class LoginUser implements UserDetails {
 
     private List<String> permissions;
 
-    private List<GrantedAuthority> authorities;
+
+    private List<? extends GrantedAuthority> authorities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

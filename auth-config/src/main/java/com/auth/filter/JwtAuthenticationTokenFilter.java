@@ -3,6 +3,7 @@ package com.auth.filter;
 import com.alibaba.fastjson.JSON;
 import com.auth.exception.SystemException;
 import com.auth.helper.JwtHelper;
+import com.auth.helper.RedisHelper;
 import com.auth.model.entity.LoginUser;
 import com.auth.model.result.StatusEnum;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,7 +26,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Resource
-    private RedisTemplate<String , String> redisTemplate ;
+    private RedisHelper redisHelper ;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -46,9 +47,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
 
         // 3、使用userId从redis中查询对应的LoginUser对象
-        String loginUserJson = redisTemplate.boundValueOps("login_user:" + userId).get();
-
-        LoginUser loginUser = JSON.parseObject(loginUserJson, LoginUser.class);
+        LoginUser loginUser = redisHelper.getCacheObject("login_user:" + userId);
 
         if(loginUser != null) {
             // 4、然后将查询到的LoginUser对象的相关信息封装到UsernamePasswordAuthenticationToken对象中，然后将该对象存储到Security的上下文对象中
