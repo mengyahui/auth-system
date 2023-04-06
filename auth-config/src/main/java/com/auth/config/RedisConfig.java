@@ -64,14 +64,17 @@ public class RedisConfig {
         // 设置日期格式
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
-        // 设置所有类型的属性可见，无论是 private 或 public 修饰的
+        // 制定了要序列化的域，ANY：包含 private 和 public
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
 
+        // 指定序列化的输入类型为非final修饰的
         objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance,
                 ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
         // 处理 SimpleGrantedAuthority 权限信息不能被反序列化
-        objectMapper.registerModule(new SimpleModule().addDeserializer(
-                SimpleGrantedAuthority.class, new SimpleGrantedAuthorityDeserializer()));
+        objectMapper.registerModule(
+                new SimpleModule()
+                        .addDeserializer(SimpleGrantedAuthority.class, new SimpleGrantedAuthorityDeserializer())
+        );
         jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
         return jackson2JsonRedisSerializer;
     }
