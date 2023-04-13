@@ -1,11 +1,13 @@
 package com.auth.system.controller;
 
 
+import com.auth.exception.SystemException;
 import com.auth.helper.JwtHelper;
 import com.auth.helper.RedisHelper;
 import com.auth.model.dto.user.UserLoginDto;
 import com.auth.model.entity.LoginUser;
 import com.auth.model.result.ApiResult;
+import com.auth.model.result.StatusEnum;
 import com.auth.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,7 +53,7 @@ public class LoginController {
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
         if(authentication == null) {
-            throw new BadCredentialsException("用户名或密码错误");
+            throw new SystemException(StatusEnum.ACCOUNT_PASSWORD_ERROR);
         }
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         String userId = loginUser.getUser().getId().toString();

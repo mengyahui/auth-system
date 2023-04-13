@@ -1,12 +1,10 @@
 package com.auth.filter;
 
-import com.alibaba.fastjson.JSON;
 import com.auth.exception.SystemException;
 import com.auth.helper.JwtHelper;
 import com.auth.helper.RedisHelper;
 import com.auth.model.entity.LoginUser;
 import com.auth.model.result.StatusEnum;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

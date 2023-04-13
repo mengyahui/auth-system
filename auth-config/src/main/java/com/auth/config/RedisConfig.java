@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.context.annotation.Bean;
@@ -64,7 +62,7 @@ public class RedisConfig {
         // 设置日期格式
         objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
-        // 制定了要序列化的域，ANY：包含 private 和 public
+        // 指定了要序列化的域，ANY：包含 private 和 public
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
 
         // 指定序列化的输入类型为非final修饰的

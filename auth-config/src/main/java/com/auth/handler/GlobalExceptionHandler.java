@@ -118,12 +118,13 @@ public class GlobalExceptionHandler {
         String message = e.getConstraintViolations().stream()
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.toList()).get(0);
+        log.error("参数校验异常:{}",message);
         return ApiResult.fail(message);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ApiResult<?> exceptionAllHandler(Exception e) {
-        log.error("未知异常:{}",e.getMessage());
-        return ApiResult.fail("未知异常");
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ApiResult<?> exceptionAllHandler(Exception e) {
+//        log.error("未知异常:{}",e.getMessage());
+//        return ApiResult.fail("未知异常");
+//    }
 }
